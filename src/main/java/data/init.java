@@ -22,7 +22,7 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 
 public class init {
 
-    private static final String SERVER_URL = "https://6t6923cp-5000.inc1.devtunnels.ms";
+    private static final String SERVER_URL = "http://flaskserver-env.eba-6uxhhzey.ap-south-1.elasticbeanstalk.com";
     private static final int THREAD_COUNT = 5;
 
     public static void main(String[] args) {
