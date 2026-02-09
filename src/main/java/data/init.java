@@ -235,17 +235,34 @@ public class init {
         try {
             System.out.println("🧹 Cleaning up leftover Chrome/ChromeDriver processes...");
 
-            // Kill all chromedriver.exe processes
-            ProcessBuilder killChromeDriver = new ProcessBuilder("taskkill", "/F", "/IM", "chromedriver.exe", "/T");
-            killChromeDriver.redirectErrorStream(true);
-            Process p1 = killChromeDriver.start();
-            p1.waitFor(5, TimeUnit.SECONDS);
+            String os = System.getProperty("os.name").toLowerCase();
+            boolean isWindows = os.contains("win");
 
-            // Kill all chrome.exe processes (headless/hidden instances)
-            ProcessBuilder killChrome = new ProcessBuilder("taskkill", "/F", "/IM", "chrome.exe", "/T");
-            killChrome.redirectErrorStream(true);
-            Process p2 = killChrome.start();
-            p2.waitFor(5, TimeUnit.SECONDS);
+            if (isWindows) {
+                // Windows: Kill all chromedriver.exe processes
+                ProcessBuilder killChromeDriver = new ProcessBuilder("taskkill", "/F", "/IM", "chromedriver.exe", "/T");
+                killChromeDriver.redirectErrorStream(true);
+                Process p1 = killChromeDriver.start();
+                p1.waitFor(5, TimeUnit.SECONDS);
+
+                // Windows: Kill all chrome.exe processes (headless/hidden instances)
+                ProcessBuilder killChrome = new ProcessBuilder("taskkill", "/F", "/IM", "chrome.exe", "/T");
+                killChrome.redirectErrorStream(true);
+                Process p2 = killChrome.start();
+                p2.waitFor(5, TimeUnit.SECONDS);
+            } else {
+                // Linux/macOS: Kill all chromedriver processes
+                ProcessBuilder killChromeDriver = new ProcessBuilder("pkill", "-9", "-f", "chromedriver");
+                killChromeDriver.redirectErrorStream(true);
+                Process p1 = killChromeDriver.start();
+                p1.waitFor(5, TimeUnit.SECONDS);
+
+                // Linux/macOS: Kill all chrome processes (headless/hidden instances)
+                ProcessBuilder killChrome = new ProcessBuilder("pkill", "-9", "-f", "chrome");
+                killChrome.redirectErrorStream(true);
+                Process p2 = killChrome.start();
+                p2.waitFor(5, TimeUnit.SECONDS);
+            }
 
             System.out.println("✅ Chrome processes cleaned up.");
             Thread.sleep(1000); // Brief pause to ensure cleanup completes
