@@ -158,7 +158,6 @@ public class init {
             companyJson.put("company_type", companyType);
             companyJson.put("headquarters", headquarters);
             companyJson.put("locations", locationsArray);
-            System.out.println(companyJson);
             return companyJson;
 
         } finally {
