@@ -32,6 +32,7 @@ public class init {
     private static void runScraperWithRestart() {
         while (true) {
             try {
+                killChromeProcesses(); // Clean up any leftover Chrome/ChromeDriver processes
                 System.out.println("🚀 Distributed scraper starting...");
                 runScraper();
                 break;
@@ -157,7 +158,7 @@ public class init {
             companyJson.put("company_type", companyType);
             companyJson.put("headquarters", headquarters);
             companyJson.put("locations", locationsArray);
-
+            System.out.println(companyJson);
             return companyJson;
 
         } finally {
@@ -228,6 +229,29 @@ public class init {
                     .until(ExpectedConditions.elementToBeClickable(By.cssSelector("button.modal__dismiss")));
             closeBtn.click();
         } catch (Exception ignored) {
+        }
+    }
+
+    private static void killChromeProcesses() {
+        try {
+            System.out.println("🧹 Cleaning up leftover Chrome/ChromeDriver processes...");
+
+            // Kill all chromedriver.exe processes
+            ProcessBuilder killChromeDriver = new ProcessBuilder("taskkill", "/F", "/IM", "chromedriver.exe", "/T");
+            killChromeDriver.redirectErrorStream(true);
+            Process p1 = killChromeDriver.start();
+            p1.waitFor(5, TimeUnit.SECONDS);
+
+            // Kill all chrome.exe processes (headless/hidden instances)
+            ProcessBuilder killChrome = new ProcessBuilder("taskkill", "/F", "/IM", "chrome.exe", "/T");
+            killChrome.redirectErrorStream(true);
+            Process p2 = killChrome.start();
+            p2.waitFor(5, TimeUnit.SECONDS);
+
+            System.out.println("✅ Chrome processes cleaned up.");
+            Thread.sleep(1000); // Brief pause to ensure cleanup completes
+        } catch (Exception e) {
+            System.out.println("⚠ Could not clean Chrome processes (may not exist): " + e.getMessage());
         }
     }
 }
